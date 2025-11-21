@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ Tầm soát Lo âu GAD-7</title>
+    <!-- Tải Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Thiết lập font Inter cho toàn bộ ứng dụng */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; /* Màu nền nhẹ nhàng, xanh mint */
+        }
+        /* Custom styling cho các ô nhập liệu radio để dễ nhìn hơn */
+        .custom-radio {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            display: inline-block;
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 50%;
+            border: 2px solid #6ee7b7; /* Màu border xanh mint */
+            transition: all 0.2s ease;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+        .custom-radio:checked {
+            background-color: #059669; /* Màu nền khi chọn: Xanh lá đậm */
+            border-color: #059669;
+            box-shadow: 0 0 0 3px #d1fae5; /* Hiệu ứng vòng ngoài */
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <div class="max-w-4xl mx-auto bg-white shadow-2xl rounded-xl overflow-hidden">
+        
+        <!-- Header -->
+        <header class="bg-teal-600 p-6 text-white text-center rounded-t-xl">
+            <h1 class="text-3xl font-bold">THANG ĐO RỐI LOẠN LO ÂU LAN TỎA GAD-7</h1>
+            <p class="mt-1 text-sm opacity-90">Generalized Anxiety Disorder 7-item Scale</p>
+        </header>
+
+        <div class="p-6 md:p-8">
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg mb-6">
+                <p class="text-sm text-blue-800 font-semibold">
+                    <span class="font-bold">Hướng dẫn:</span> Xin vui lòng đánh dấu (✓) vào mức độ thường xuyên bạn bị phiền toái bởi các vấn đề sau **trong vòng 2 tuần qua**.
+                </p>
+            </div>
+
+            <!-- Questionnaire Form -->
+            <form id="gad7Form">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <!-- Table Header -->
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-500 uppercase text-xs leading-normal">
+                                <th class="py-3 px-3 text-left">#</th>
+                                <th class="py-3 px-3 text-left">Vấn đề</th>
+                                <th class="py-3 px-2 text-center whitespace-nowrap">0. Không chút nào</th>
+                                <th class="py-3 px-2 text-center whitespace-nowrap">1. Vài ngày</th>
+                                <th class="py-3 px-2 text-center whitespace-nowrap">2. Hơn nửa số ngày</th>
+                                <th class="py-3 px-2 text-center whitespace-nowrap">3. Gần như mọi ngày</th>
+                            </tr>
+                        </thead>
+                        <!-- Table Body -->
+                        <tbody class="text-gray-700 text-sm font-light divide-y divide-gray-200">
+                            <!-- Questions Q1 to Q7 -->
+                            <!-- Q1 -->
+                            <tr class="hover:bg-gray-100">
+                                <td class="py-4 px-3 text-left font-medium">1.</td>
+                                <td class="py-4 px-3 text-left">Cảm thấy căng thẳng, lo lắng hoặc bồn chồn.</td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q1" value="0" class="custom-radio" required></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q1" value="1" class="custom-radio"></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q1" value="2" class="custom-radio"></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q1" value="3" class="custom-radio"></td>
+                            </tr>
+                            <!-- Q2 -->
+                            <tr class="hover:bg-gray-100 bg-gray-50">
+                                <td class="py-4 px-3 text-left font-medium">2.</td>
+                                <td class="py-4 px-3 text-left">Không thể ngừng hoặc kiểm soát sự lo lắng.</td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q2" value="0" class="custom-radio" required></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q2" value="1" class="custom-radio"></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q2" value="2" class="custom-radio"></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q2" value="3" class="custom-radio"></td>
+                            </tr>
+                            <!-- Q3 -->
+                            <tr class="hover:bg-gray-100">
+                                <td class="py-4 px-3 text-left font-medium">3.</td>
+                                <td class="py-4 px-3 text-left">Lo lắng quá mức về nhiều điều khác nhau trong cuộc sống.</td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q3" value="0" class="custom-radio" required></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q3" value="1" class="custom-radio"></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q3" value="2" class="custom-radio"></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q3" value="3" class="custom-radio"></td>
+                            </tr>
+                            <!-- Q4 -->
+                            <tr class="hover:bg-gray-100 bg-gray-50">
+                                <td class="py-4 px-3 text-left font-medium">4.</td>
+                                <td class="py-4 px-3 text-left">Khó thư giãn.</td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q4" value="0" class="custom-radio" required></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q4" value="1" class="custom-radio"></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q4" value="2" class="custom-radio"></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q4" value="3" class="custom-radio"></td>
+                            </tr>
+                            <!-- Q5 -->
+                            <tr class="hover:bg-gray-100">
+                                <td class="py-4 px-3 text-left font-medium">5.</td>
+                                <td class="py-4 px-3 text-left">Bồn chồn/bứt rứt đến mức khó ngồi yên.</td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q5" value="0" class="custom-radio" required></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q5" value="1" class="custom-radio"></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q5" value="2" class="custom-radio"></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q5" value="3" class="custom-radio"></td>
+                            </tr>
+                            <!-- Q6 -->
+                            <tr class="hover:bg-gray-100 bg-gray-50">
+                                <td class="py-4 px-3 text-left font-medium">6.</td>
+                                <td class="py-4 px-3 text-left">Dễ trở nên bực bội hoặc cáu gắt.</td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q6" value="0" class="custom-radio" required></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q6" value="1" class="custom-radio"></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q6" value="2" class="custom-radio"></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q6" value="3" class="custom-radio"></td>
+                            </tr>
+                            <!-- Q7 -->
+                            <tr class="hover:bg-gray-100">
+                                <td class="py-4 px-3 text-left font-medium">7.</td>
+                                <td class="py-4 px-3 text-left">Cảm thấy sợ hãi như thể điều gì tồi tệ có thể xảy ra.</td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q7" value="0" class="custom-radio" required></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q7" value="1" class="custom-radio"></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q7" value="2" class="custom-radio"></td>
+                                <td class="py-4 px-2 text-center"><input type="radio" name="q7" value="3" class="custom-radio"></td>
+                            </tr>
+                            <!-- Total Score Row (for display) -->
+                            <tr class="bg-teal-50 border-t-2 border-teal-600">
+                                <td class="py-3 px-3 text-left font-bold text-base text-teal-800" colspan="2">Tổng cộng:</td>
+                                <td class="py-3 px-2 text-center font-bold text-lg text-teal-800" colspan="4">
+                                    <span id="totalScoreDisplay">0</span> / 21
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+
+            <!-- Results Section -->
+            <div class="mt-8 p-6 rounded-xl border-2 border-dashed border-gray-300">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l2-1 2 1v13M9 19c-3.133 0-6-1.5-6-4s2.867-4 6-4m0 8c3.133 0 6-1.5 6-4s-2.867-4-6-4m0 0l-3.279 2.186a2 2 0 00-.721 1.488V17a2 2 0 00.721 1.488L9 19z" />
+                    </svg>
+                    Kết quả Sàng lọc Lo âu (GAD-7)
+                </h2>
+                <div id="resultInterpretation" class="text-center p-4 rounded-lg bg-white border border-gray-200">
+                    <p class="text-gray-500 italic">Vui lòng hoàn thành 7 câu hỏi trên để nhận kết quả.</p>
+                </div>
+            </div>
+
+            <!-- Functional Impairment Question (Q8 - Not Scored) -->
+            <div class="mt-8 border-t pt-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">8. Đánh giá Suy giảm Chức năng (Không tính điểm)</h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Nếu bạn đã xác định có bất kỳ vấn đề nào ở trên (Q1-Q7), hãy cho biết các vấn đề đó đã gây khó khăn cho bạn như thế nào trong công việc, học tập, ở nhà, và trong mối quan hệ với người khác?
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <label class="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center hover:bg-gray-100 transition duration-150 cursor-pointer">
+                        <input type="radio" name="q8_impairment" value="0" class="custom-radio" checked>
+                        <span>Không khó khăn chút nào</span>
+                    </label>
+                    <label class="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center hover:bg-gray-100 transition duration-150 cursor-pointer">
+                        <input type="radio" name="q8_impairment" value="1" class="custom-radio">
+                        <span>Hơi khó khăn</span>
+                    </label>
+                    <label class="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center hover:bg-gray-100 transition duration-150 cursor-pointer">
+                        <input type="radio" name="q8_impairment" value="2" class="custom-radio">
+                        <span>Rất khó khăn</span>
+                    </label>
+                    <label class="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center hover:bg-gray-100 transition duration-150 cursor-pointer">
+                        <input type="radio" name="q8_impairment" value="3" class="custom-radio">
+                        <span>Cực kỳ khó khăn</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Disclaimer for Professional Use -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <p class="text-xs text-red-700 italic bg-red-50 p-3 rounded-lg">
+                    **Lưu ý quan trọng (Dành cho người dùng cuối):** Công cụ này chỉ là một công cụ sàng lọc nhanh. Kết quả không thay thế cho đánh giá và chẩn đoán lâm sàng của bác sĩ tâm thần hoặc chuyên gia sức khỏe tâm thần.
+                </p>
+                <p class="text-xs text-gray-500 mt-2">
+                    <span class="font-semibold">Nguồn tham khảo:</span> Kroenke K, Spitzer RL, Williams JBW, et al. The PHQ-9: validity of a brief depression severity measure. J Gen Intern Med 2001;16:606-13. Thang đo GAD-7 được phát triển dựa trên tiêu chí DSM-IV.
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('gad7Form');
+        const totalScoreDisplay = document.getElementById('totalScoreDisplay');
+        const resultInterpretation = document.getElementById('resultInterpretation');
+
+        /**
+         * Tính toán tổng điểm GAD-7 từ Q1 đến Q7
+         */
+        function calculateScore() {
+            let totalScore = 0;
+            let questionsAnswered = true;
+            
+            for (let i = 1; i <= 7; i++) {
+                const questionName = `q${i}`;
+                const checkedRadio = document.querySelector(`input[name="${questionName}"]:checked`);
+                
+                if (checkedRadio) {
+                    totalScore += parseInt(checkedRadio.value);
+                } else {
+                    questionsAnswered = false;
+                }
+            }
+
+            totalScoreDisplay.textContent = totalScore;
+            
+            if (questionsAnswered) {
+                displayResult(totalScore);
+            } else {
+                resultInterpretation.innerHTML = '<p class="text-gray-500 italic">Vui lòng hoàn thành 7 câu hỏi trên để nhận kết quả.</p>';
+                resultInterpretation.className = "text-center p-4 rounded-lg bg-white border border-gray-200";
+            }
+        }
+
+        /**
+         * Diễn giải kết quả dựa trên tổng điểm GAD-7
+         * @param {number} score Tổng điểm GAD-7 (0-21)
+         */
+        function interpretScore(score) {
+            let interpretation = {
+                level: "Lo âu tối thiểu",
+                description: "Mức độ lo âu rất nhẹ hoặc không có. Không cần theo dõi thêm tại thời điểm này.",
+                color: "bg-green-100 text-green-800 border-green-500"
+            };
+
+            if (score >= 5 && score <= 9) {
+                interpretation = {
+                    level: "Lo âu nhẹ",
+                    description: "Mức độ lo âu nhẹ. Nên theo dõi các triệu chứng và xem xét lặp lại đánh giá sau một thời gian.",
+                    color: "bg-yellow-100 text-yellow-800 border-yellow-500"
+                };
+            } else if (score >= 10 && score <= 14) {
+                interpretation = {
+                    level: "Lo âu vừa/trung bình",
+                    description: "Mức độ lo âu vừa/trung bình. Điểm số này thường cần đánh giá lâm sàng sâu hơn và có thể xem xét các can thiệp điều trị.",
+                    color: "bg-orange-100 text-orange-800 border-orange-500"
+                };
+            } else if (score >= 15) {
+                interpretation = {
+                    level: "Lo âu nặng",
+                    description: "Mức độ lo âu nặng. Triệu chứng lo âu ở mức độ nghiêm trọng và cần được thăm khám, can thiệp điều trị tích cực ngay lập tức.",
+                    color: "bg-red-100 text-red-800 border-red-500"
+                };
+            }
+            
+            return interpretation;
+        }
+
+        /**
+         * Hiển thị kết quả ra màn hình
+         * @param {number} score 
+         */
+        function displayResult(score) {
+            const result = interpretScore(score);
+            
+            resultInterpretation.className = `p-4 rounded-lg border-2 ${result.color}`;
+            resultInterpretation.innerHTML = `
+                <div class="text-2xl font-bold mb-2">Mức độ Lo âu: <span class="uppercase">${result.level}</span></div>
+                <p class="text-sm">${result.description}</p>
+            `;
+        }
+
+        // Gán sự kiện cho tất cả các nút radio trong form
+        form.addEventListener('change', calculateScore);
+
+        // Chạy lần đầu tiên để thiết lập trạng thái ban đầu
+        calculateScore();
+    </script>
+
+</body>
+</html>
