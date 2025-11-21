@@ -447,3 +447,105 @@
                         <div class="score-options md:contents text-center">
                             <label class="block md:inline-block"><input type="radio" name="q5" value="0" class="custom-radio" required> <span class="md:hidden">0. Không chút nào</span></label>
                             <label class="block md:inline-block"><input type="radio" name="q5" value="1" class="custom-radio"> <span class="md:hidden">1. Vài ngày</span></label>
+                            <label class="block md:inline-block"><input type="radio" name="q5" value="2" class="custom-radio"> <span class="md:hidden">2. Hơn nửa số ngày</span></label>
+                            <label class="block md:inline-block"><input type="radio" name="q5" value="3" class="custom-radio"> <span class="md:hidden">3. Gần như mọi ngày</span></label>
+                        </div>
+                    </div>
+                    <!-- Q6 -->
+                    <div class="question-row md:grid md:grid-cols-6 md:gap-2 py-4 px-3 hover:bg-gray-50 transition duration-150 bg-gray-50 md:bg-white">
+                        <div class="question-text md:col-span-2 text-sm text-gray-700">6. Dễ trở nên bực bội hoặc cáu gắt.</div>
+                        <div class="score-options md:contents text-center">
+                            <label class="block md:inline-block"><input type="radio" name="q6" value="0" class="custom-radio" required> <span class="md:hidden">0. Không chút nào</span></label>
+                            <label class="block md:inline-block"><input type="radio" name="q6" value="1" class="custom-radio"> <span class="md:hidden">1. Vài ngày</span></label>
+                            <label class="block md:inline-block"><input type="radio" name="q6" value="2" class="custom-radio"> <span class="md:hidden">2. Hơn nửa số ngày</span></label>
+                            <label class="block md:inline-block"><input type="radio" name="q6" value="3" class="custom-radio"> <span class="md:hidden">3. Gần như mọi ngày</span></label>
+                        </div>
+                    </div>
+                    <!-- Q7 -->
+                    <div class="question-row md:grid md:grid-cols-6 md:gap-2 py-4 px-3 hover:bg-gray-50 transition duration-150 border-b border-gray-200">
+                        <div class="question-text md:col-span-2 text-sm text-gray-700">7. Cảm thấy sợ hãi như thể điều gì tồi tệ có thể xảy ra.</div>
+                        <div class="score-options md:contents text-center">
+                            <label class="block md:inline-block"><input type="radio" name="q7" value="0" class="custom-radio" required> <span class="md:hidden">0. Không chút nào</span></label>
+                            <label class="block md:inline-block"><input type="radio" name="q7" value="1" class="custom-radio"> <span class="md:hidden">1. Vài ngày</span></label>
+                            <label class="block md:inline-block"><input type="radio" name="q7" value="2" class="custom-radio"> <span class="md:hidden">2. Hơn nửa số ngày</span></label>
+                            <label class="block md:inline-block"><input type="radio" name="q7" value="3" class="custom-radio"> <span class="md:hidden">3. Gần như mọi ngày</span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Score & Save Button -->
+                <div class="bg-teal-50 p-4 flex justify-between items-center rounded-b-lg mt-4 shadow-md">
+                    <p class="text-lg font-bold text-teal-800">Tổng điểm hiện tại: <span id="totalScoreDisplay" class="text-2xl ml-1">0</span> / 21</p>
+                    <button id="saveTestButton" type="button" class="py-3 px-6 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-lg transition duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        Lưu & Xem Biểu đồ
+                    </button>
+                </div>
+            </form>
+
+            <!-- Results Section -->
+            <div class="mt-8 p-6 rounded-xl border-2 border-dashed border-gray-300">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l2-1 2 1v13M9 19c-3.133 0-6-1.5-6-4s2.867-4 6-4m0 8c3.133 0 6-1.5 6-4s-2.867-4-6-4m0 0l-3.279 2.186a2 2 0 00-.721 1.488V17a2 2 0 00.721 1.488L9 19z" />
+                    </svg>
+                    Kết quả Sàng lọc Lo âu (GAD-7)
+                </h2>
+                <div id="resultInterpretation" class="text-center p-4 rounded-lg bg-white border border-gray-200">
+                    <p class="text-gray-500 italic">Vui lòng hoàn thành 7 câu hỏi trên để nhận kết quả.</p>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Lịch sử Theo dõi Điểm số</h2>
+                <div id="noDataMessage" class="hidden text-center p-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+                    <p class="text-gray-600 font-semibold">Chưa có dữ liệu nào được lưu trữ.</p>
+                    <p class="text-sm text-gray-500 mt-2">Hãy hoàn thành bài test và nhấn "Lưu & Xem Biểu đồ" để bắt đầu theo dõi tiến trình.</p>
+                </div>
+                <div class="relative h-64 md:h-96 w-full p-4 border rounded-lg shadow-inner bg-white">
+                    <canvas id="scoreChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Functional Impairment Question (Q8 - Not Scored) -->
+            <div class="mt-8 border-t pt-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">8. Đánh giá Suy giảm Chức năng (Không tính điểm)</h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Nếu bạn đã xác định có bất kỳ vấn đề nào ở trên (Q1-Q7), hãy cho biết các vấn đề đó đã gây khó khăn cho bạn như thế nào trong công việc, học tập, ở nhà, và trong mối quan hệ với người khác?
+                </p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <label class="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center hover:bg-gray-100 transition duration-150 cursor-pointer text-sm">
+                        <input type="radio" name="q8_impairment" value="0" class="custom-radio mr-2" checked>
+                        <span>Không khó khăn</span>
+                    </label>
+                    <label class="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center hover:bg-gray-100 transition duration-150 cursor-pointer text-sm">
+                        <input type="radio" name="q8_impairment" value="1" class="custom-radio mr-2">
+                        <span>Hơi khó khăn</span>
+                        </label>
+                    <label class="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center hover:bg-gray-100 transition duration-150 cursor-pointer text-sm">
+                        <input type="radio" name="q8_impairment" value="2" class="custom-radio mr-2">
+                        <span>Rất khó khăn</span>
+                    </label>
+                    <label class="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center hover:bg-gray-100 transition duration-150 cursor-pointer text-sm">
+                        <input type="radio" name="q8_impairment" value="3" class="custom-radio mr-2">
+                        <span>Cực kỳ khó khăn</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Disclaimer for Professional Use -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <p class="text-xs text-red-700 italic bg-red-50 p-3 rounded-lg">
+                    **Lưu ý quan trọng (Dành cho người dùng cuối):** Công cụ này chỉ là một công cụ sàng lọc nhanh. Kết quả không thay thế cho đánh giá và chẩn đoán lâm sàng của bác sĩ tâm thần hoặc chuyên gia sức khỏe tâm thần.
+                </p>
+            </div>
+
+        </div>
+    </div>
+    
+    <!-- Message Box (thay thế alert) -->
+    <div id="messageBox" class="fixed bottom-4 right-4 p-4 rounded-lg shadow-xl text-white font-semibold opacity-0 transition-opacity duration-300"></div>
+
+</body>
+</html>
