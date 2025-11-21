@@ -43,25 +43,8 @@
         }
     </style>
     
-    <!-- FIREBASE CDNs -->
+    <!-- SỬ DỤNG JAVASCRIPT THUẦN CHO LOCAL STORAGE -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, query, orderBy, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
-        // Thiết lập mức độ log để debug (tùy chọn)
-        setLogLevel('Debug');
-
-        // Biến toàn cục từ Canvas Environment
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        let db = null;
-        let auth = null;
-        let userId = null;
-        let isAuthReady = false;
-
         // Định nghĩa các phần tử DOM
         const totalScoreDisplay = document.getElementById('totalScoreDisplay');
         const resultInterpretation = document.getElementById('resultInterpretation');
@@ -69,53 +52,8 @@
         const chartCanvas = document.getElementById('scoreChart');
         const userNameInput = document.getElementById('userName');
         const testDateInput = document.getElementById('testDate');
-        const userIdDisplay = document.getElementById('userIdDisplay');
 
-        // Hàm khởi tạo Firebase
-        async function initializeFirebase() {
-            if (!firebaseConfig) {
-                console.error("Firebase config is missing.");
-                return;
-            }
-            try {
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                
-                // Set persistence to session to maintain login across tab/session
-                await setPersistence(auth, browserSessionPersistence);
-
-                // Đăng nhập/Xác thực người dùng
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
-                // Lắng nghe thay đổi trạng thái xác thực
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        isAuthReady = true;
-                        userIdDisplay.textContent = `ID Người Dùng: ${userId}`;
-                        console.log("Firebase Auth Ready. User ID:", userId);
-                        // Tải dữ liệu lịch sử ngay khi auth sẵn sàng
-                        loadHistoryAndDrawChart();
-                    } else {
-                        userId = null;
-                        isAuthReady = true;
-                        userIdDisplay.textContent = 'Đăng nhập ẩn danh...';
-                        console.log("Anonymous Sign In failed or state changed.");
-                    }
-                });
-
-            } catch (error) {
-                console.error("Lỗi khi khởi tạo hoặc xác thực Firebase:", error);
-                userIdDisplay.textContent = 'Lỗi Auth: ' + error.message;
-            }
-        }
-
-        // Hàm tính điểm (giữ nguyên logic)
+        // Hàm tính điểm
         function calculateScore() {
             const form = document.getElementById('gad7Form');
             let totalScore = 0;
@@ -163,15 +101,8 @@
             `;
         }
 
-        // Hàm lưu trữ kết quả vào Firestore
-        async function saveTestResult() {
-            if (!isAuthReady || !userId || !db) {
-                console.error("Firebase chưa sẵn sàng hoặc không có userId.");
-                // Thay alert bằng thông báo trên UI
-                displayMessage("Lỗi: Hệ thống chưa sẵn sàng để lưu dữ liệu. Vui lòng thử lại.", 'bg-red-500');
-                return;
-            }
-
+        // Hàm lưu trữ kết quả vào Local Storage
+        function saveTestResult() {
             const { totalScore, questionsAnswered } = calculateScore();
             if (!questionsAnswered) {
                 displayMessage("Vui lòng hoàn thành tất cả các câu hỏi trước khi lưu.", 'bg-yellow-500');
@@ -180,25 +111,38 @@
 
             const userName = userNameInput.value.trim() || 'Người dùng ẩn danh';
             const testDate = testDateInput.value;
-            const docRef = doc(collection(db, `artifacts/${appId}/users/${userId}/gad7_results`));
-            
-            // Dữ liệu sẽ lưu
-            const dataToSave = {
+
+            // 1. Lấy lịch sử cũ
+            const historyString = localStorage.getItem('gad7_history');
+            let historyData = [];
+            if (historyString) {
+                try {
+                    historyData = JSON.parse(historyString);
+                } catch (e) {
+                    console.error("Lỗi khi đọc lịch sử từ Local Storage:", e);
+                }
+            }
+
+            // 2. Thêm dữ liệu mới
+            const newEntry = {
                 score: totalScore,
                 date: testDate,
                 userName: userName,
-                timestamp: Date.now(),
-                serverTimestamp: serverTimestamp()
+                timestamp: Date.now()
             };
+            
+            historyData.push(newEntry);
 
             try {
-                await setDoc(docRef, dataToSave);
-                localStorage.setItem('gad7_userName', userName); // Lưu tên cục bộ
-                displayMessage("Kết quả đã được lưu thành công!", 'bg-green-500');
-                await loadHistoryAndDrawChart(); // Tải lại và vẽ biểu đồ
+                // 3. Lưu lịch sử mới và tên người dùng vào Local Storage
+                localStorage.setItem('gad7_history', JSON.stringify(historyData));
+                localStorage.setItem('gad7_userName', userName);
+                
+                displayMessage("Kết quả đã được lưu thành công vào trình duyệt!", 'bg-green-500');
+                loadHistoryAndDrawChart(); // Tải lại và vẽ biểu đồ
             } catch (error) {
-                console.error("Lỗi khi lưu dữ liệu vào Firestore:", error);
-                displayMessage(`Lỗi khi lưu: ${error.message}`, 'bg-red-500');
+                console.error("Lỗi khi lưu dữ liệu vào Local Storage:", error);
+                displayMessage(`Lỗi khi lưu: Không thể lưu trữ dữ liệu.`, 'bg-red-500');
             }
         }
 
@@ -216,7 +160,7 @@
             const sortedData = historyData.sort((a, b) => a.timestamp - b.timestamp);
 
             const labels = sortedData.map(d => {
-                const date = new Date(d.date + 'T00:00:00'); // Đảm bảo múi giờ địa phương
+                const date = new Date(d.date + 'T00:00:00'); 
                 return date.toLocaleDateString('vi-VN');
             });
             const scores = sortedData.map(d => d.score);
@@ -268,53 +212,40 @@
                     }
                 }
             });
-            
-            // Cập nhật tên người dùng (lấy từ dữ liệu mới nhất)
-            if (historyData.length > 0) {
-                userNameInput.value = historyData[historyData.length - 1].userName;
-            }
         }
 
-        // Hàm tải lịch sử và vẽ biểu đồ
-        async function loadHistoryAndDrawChart() {
-            if (!isAuthReady || !userId || !db) {
-                // Sẽ gọi lại sau khi Auth sẵn sàng
-                return;
+        // Hàm tải lịch sử và vẽ biểu đồ từ Local Storage
+        function loadHistoryAndDrawChart() {
+            const historyString = localStorage.getItem('gad7_history');
+            let historyData = [];
+            
+            if (historyString) {
+                try {
+                    historyData = JSON.parse(historyString);
+                } catch (e) {
+                    console.error("Lỗi khi đọc lịch sử từ Local Storage:", e);
+                }
             }
 
-            const colRef = collection(db, `artifacts/${appId}/users/${userId}/gad7_results`);
-            const q = query(colRef); 
-            // KHÔNG dùng orderBy('timestamp') để tránh lỗi thiếu index, lọc bằng JS
-
-            // Sử dụng onSnapshot để cập nhật real-time
-            onSnapshot(q, (snapshot) => {
-                const historyData = [];
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    historyData.push({
-                        id: doc.id,
-                        score: data.score,
-                        date: data.date,
-                        timestamp: data.timestamp, // Dùng timestamp để sắp xếp
-                        userName: data.userName || 'Người dùng ẩn danh'
-                    });
-                });
-
-                // Sắp xếp dữ liệu bằng JS
-                historyData.sort((a, b) => a.timestamp - b.timestamp);
+            // Sắp xếp dữ liệu bằng JS
+            historyData.sort((a, b) => a.timestamp - b.timestamp);
+            
+            if (historyData.length > 0) {
+                drawChart(historyData);
+                chartCanvas.style.display = 'block';
+                document.getElementById('noDataMessage').style.display = 'none';
                 
-                if (historyData.length > 0) {
-                    drawChart(historyData);
-                } else {
-                    // Hiển thị thông báo nếu không có dữ liệu
-                    if (chartInstance) chartInstance.destroy();
-                    chartCanvas.style.display = 'none';
-                    document.getElementById('noDataMessage').style.display = 'block';
+                // Cập nhật tên người dùng từ Local Storage đã lưu
+                const savedUserName = localStorage.getItem('gad7_userName');
+                if (savedUserName) {
+                    userNameInput.value = savedUserName;
                 }
-            }, (error) => {
-                console.error("Lỗi khi tải lịch sử từ Firestore:", error);
-                displayMessage(`Lỗi tải dữ liệu: ${error.message}`, 'bg-red-500');
-            });
+            } else {
+                // Hiển thị thông báo nếu không có dữ liệu
+                if (chartInstance) chartInstance.destroy();
+                chartCanvas.style.display = 'none';
+                document.getElementById('noDataMessage').style.display = 'block';
+            }
         }
         
         // --- Hàm thông báo thay thế alert() ---
@@ -346,9 +277,9 @@
             form.addEventListener('change', calculateScore);
             saveTestButton.addEventListener('click', saveTestResult);
             
-            // Khởi tạo Firebase
-            initializeFirebase();
-
+            // Khởi tạo data
+            loadHistoryAndDrawChart();
+            
             // Chạy lần đầu tiên để thiết lập trạng thái ban đầu
             calculateScore();
         });
@@ -361,13 +292,13 @@
         <!-- Header -->
         <header class="bg-teal-600 p-6 text-white text-center rounded-t-xl">
             <h1 class="text-3xl font-bold">CÔNG CỤ TẦM SOÁT VÀ THEO DÕI LO ÂU GAD-7</h1>
-            <p class="mt-1 text-sm opacity-90">Tích hợp Lưu trữ & Biểu đồ Tiến trình (Bản dành cho Cộng đồng)</p>
+            <p class="mt-1 text-sm opacity-90">Dữ liệu được lưu trữ cục bộ trên trình duyệt của bạn</p>
         </header>
 
         <div class="p-6 md:p-8">
 
             <!-- Thông tin Người dùng & Ngày làm test -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-lg border">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 p-4 bg-gray-50 rounded-lg border">
                 <div class="md:col-span-1">
                     <label for="userName" class="block text-sm font-medium text-gray-700">Tên người dùng:</label>
                     <input type="text" id="userName" placeholder="Nhập tên của bạn" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 p-2" required>
@@ -375,9 +306,6 @@
                 <div class="md:col-span-1">
                     <label for="testDate" class="block text-sm font-medium text-gray-700">Ngày làm test:</label>
                     <input type="date" id="testDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 p-2" required>
-                </div>
-                <div class="md:col-span-1 flex items-end">
-                    <p id="userIdDisplay" class="text-xs text-gray-500 italic truncate w-full pt-1">Đang kết nối...</p>
                 </div>
             </div>
 
@@ -495,18 +423,6 @@
                 </div>
             </div>
 
-            <!-- Chart Section -->
-            <div class="mt-8 pt-6 border-t border-gray-200">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">Lịch sử Theo dõi Điểm số</h2>
-                <div id="noDataMessage" class="hidden text-center p-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-                    <p class="text-gray-600 font-semibold">Chưa có dữ liệu nào được lưu trữ.</p>
-                    <p class="text-sm text-gray-500 mt-2">Hãy hoàn thành bài test và nhấn "Lưu & Xem Biểu đồ" để bắt đầu theo dõi tiến trình.</p>
-                </div>
-                <div class="relative h-64 md:h-96 w-full p-4 border rounded-lg shadow-inner bg-white">
-                    <canvas id="scoreChart"></canvas>
-                </div>
-            </div>
-
             <!-- Functional Impairment Question (Q8 - Not Scored) -->
             <div class="mt-8 border-t pt-6">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">8. Đánh giá Suy giảm Chức năng (Không tính điểm)</h3>
@@ -531,6 +447,18 @@
                         <input type="radio" name="q8_impairment" value="3" class="custom-radio mr-2">
                         <span>Cực kỳ khó khăn</span>
                     </label>
+                </div>
+            </div>
+            
+            <!-- Chart Section (ĐÃ CHUYỂN XUỐNG DƯỚI CÙNG) -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Lịch sử Theo dõi Điểm số</h2>
+                <div id="noDataMessage" class="hidden text-center p-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+                    <p class="text-gray-600 font-semibold">Chưa có dữ liệu nào được lưu trữ.</p>
+                    <p class="text-sm text-gray-500 mt-2">Hãy hoàn thành bài test và nhấn "Lưu & Xem Biểu đồ" để bắt đầu theo dõi tiến trình.</p>
+                </div>
+                <div class="relative h-64 md:h-96 w-full p-4 border rounded-lg shadow-inner bg-white">
+                    <canvas id="scoreChart"></canvas>
                 </div>
             </div>
 
